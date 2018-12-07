@@ -95,4 +95,17 @@ public class AppTest {
         //This test will only pass when wifi is disconnected
 //        assertTrue("expect that no internet string", App.getRonSwanson().contains("Sorry! Internet connection not available"));
     }
+
+    @Test public void testAddToJson() {
+
+        String[] tags = new String[0];
+        Quote one = new Quote(tags, "Jessica Lovell", "", "This is a test");
+
+        assertFalse("expect False because it is already in the file", App.addToJson(one));
+
+//        Uncomment this code to see that something is added. When this test is run a 2nd time, it will fail because it is in the file.
+//        Quote two = new Quote(tags, "tester", "", "Tester is running this one");
+//        assertTrue("Expect this test to pass the first time", App.addToJson(two));
+
+    }
 }
