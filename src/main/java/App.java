@@ -1,9 +1,7 @@
 import com.google.gson.Gson;
+import jdk.nashorn.internal.runtime.QuotedStringTokenizer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -37,7 +35,7 @@ public class App {
 //        } else {
 //            System.out.println(quotes[rand].toString());
 //        }
-        getRonSwanson();
+        System.out.println(getRonSwanson());
     }
 
     //method to read the the JSON file 
@@ -70,9 +68,12 @@ public class App {
             String inputLine;
 
             while ((inputLine = reader.readLine()) != null){
-                System.out.println(inputLine.substring(1, inputLine.length()-1));
+                String text = inputLine.substring(1, inputLine.length()-1);
+                String[] tags = new String[0];
+                Quote quote = new Quote(tags, "Ron Swanson", "0", text);
+                addToJson(quote);
+                return quote.toString();
             }
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
@@ -81,5 +82,41 @@ public class App {
             return "Sorry! Internet connection not available";
         }
         return null;
+    }
+
+    // this method add a quote to the JSON file
+    public static boolean addToJson(Quote inputQuote) {
+
+        //check that quote is not in file
+        Quote[] quotes = readFile();
+        for (Quote quote : quotes){
+            if (quote.text.contains(inputQuote.text)){
+                return false;
+            }
+        }
+
+        //Insert quote by making new array and +1
+        Quote[] newQuotes = new Quote[quotes.length + 1];
+
+        for (int i = 0; i < quotes.length + 1; i++) {
+            if (i == quotes.length) {
+                newQuotes[i] = inputQuote;
+            } else {
+                newQuotes[i] = quotes[i];
+            }
+        }
+
+        //turn into Json object
+        Gson gson = new Gson();
+        String json = gson.toJson(newQuotes);
+
+        //write to file
+        try (FileWriter file = new FileWriter("./resources/recentquotes.json")){
+            file.write(json);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
