@@ -1,8 +1,11 @@
 import com.google.gson.Gson;
+import jdk.nashorn.internal.runtime.QuotedStringTokenizer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +23,7 @@ public class App {
         Quote[] quotes = readFile();
         int rand = getRandom(quotes.length);
 
-        //search for
+        //search for which quote to print out
         if (args.length > 0) {
             if (args[0].equals("author")){
                 System.out.println(args[0]);
@@ -28,6 +31,12 @@ public class App {
             }
             else if (args[0].equals("contains")){
                 System.out.println(Quote.searchContains(quotes, args[1]));
+            } else if (args[0].equals("american")){
+                if(getRonSwanson() == "Sorry! Internet connection not available"){
+                    System.out.println(quotes[rand].toString());
+                } else {
+                    System.out.println(getRonSwanson());
+                }
             }
         } else {
             System.out.println(quotes[rand].toString());
@@ -50,5 +59,69 @@ public class App {
     // Gets a random number
     public static int getRandom(int num) {
         return (int) Math.floor(Math.random()*(num));
+    }
+
+    // Make API call to Ron Swanson API
+    public static String getRonSwanson(){
+
+        try {
+            URL url = new URL("https://ron-swanson-quotes.herokuapp.com/v2/quotes");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = reader.readLine()) != null){
+                String text = inputLine.substring(1, inputLine.length()-1);
+                String[] tags = new String[0];
+                Quote quote = new Quote(tags, "Ron Swanson", "0", text);
+                addToJson(quote);
+                return quote.toString();
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            return "Sorry! Internet connection not available";
+        }
+        return null;
+    }
+
+    // this method add a quote to the JSON file
+    public static boolean addToJson(Quote inputQuote) {
+
+        //check that quote is not in file
+        Quote[] quotes = readFile();
+        for (Quote quote : quotes){
+            if (quote.text.contains(inputQuote.text)){
+                return false;
+            }
+        }
+
+        //Insert quote by making new array and +1
+        Quote[] newQuotes = new Quote[quotes.length + 1];
+
+        for (int i = 0; i < quotes.length + 1; i++) {
+            if (i == quotes.length) {
+                newQuotes[i] = inputQuote;
+            } else {
+                newQuotes[i] = quotes[i];
+            }
+        }
+
+        //turn into Json object
+        Gson gson = new Gson();
+        String json = gson.toJson(newQuotes);
+
+        //write to file
+        try (FileWriter file = new FileWriter("./resources/recentquotes.json")){
+            file.write(json);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
