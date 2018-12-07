@@ -85,4 +85,14 @@ public class AppTest {
         assertTrue("Expect to get something with 'and'", Quote.searchContains(quotes, "and").contains("and"));
         assertEquals("nvjenrvijfnjvdfniv not found.", Quote.searchContains(quotes, "nvjenrvijfnjvdfniv"));
     }
+
+    @Test public void testGetSwanson() {
+
+        assertTrue("expect to contain 'Ron Swanson'", App.getRonSwanson().contains("Ron Swanson"));
+        assertTrue("expect to contain 'Ron Swanson'", App.getRonSwanson().contains("Ron Swanson"));
+        assertTrue("expect to contain 'Ron Swanson'", App.getRonSwanson().contains("Ron Swanson"));
+
+        //This test will only pass when wifi is disconnected
+//        assertTrue("expect that no internet string", App.getRonSwanson().contains("Sorry! Internet connection not available"));
+    }
 }

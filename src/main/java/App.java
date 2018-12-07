@@ -23,19 +23,24 @@ public class App {
         Quote[] quotes = readFile();
         int rand = getRandom(quotes.length);
 
-        //search for
-//        if (args.length > 0) {
-//            if (args[0].equals("author")){
-//                System.out.println(args[0]);
-//                System.out.println(Quote.searchAuthor(quotes, args[1]));
-//            }
-//            else if (args[0].equals("contains")){
-//                System.out.println(Quote.searchContains(quotes, args[1]));
-//            }
-//        } else {
-//            System.out.println(quotes[rand].toString());
-//        }
-        System.out.println(getRonSwanson());
+        //search for which quote to print out
+        if (args.length > 0) {
+            if (args[0].equals("author")){
+                System.out.println(args[0]);
+                System.out.println(Quote.searchAuthor(quotes, args[1]));
+            }
+            else if (args[0].equals("contains")){
+                System.out.println(Quote.searchContains(quotes, args[1]));
+            } else if (args[0].equals("american")){
+                if(getRonSwanson() == "Sorry! Internet connection not available"){
+                    System.out.println(quotes[rand].toString());
+                } else {
+                    System.out.println(getRonSwanson());
+                }
+            }
+        } else {
+            System.out.println(quotes[rand].toString());
+        }
     }
 
     //method to read the the JSON file 
