@@ -12,9 +12,3 @@
 
 
 ## Collaborators: [Jessica Lovell](https://www.linkedin.com/in/lovelljessica/) and [Evan Slaton](https://www.linkedin.com/in/evanslaton/)
-
-
-
-
-
-

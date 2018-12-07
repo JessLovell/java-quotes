@@ -3,6 +3,11 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,17 +26,18 @@ public class App {
         int rand = getRandom(quotes.length);
 
         //search for
-        if (args.length > 0) {
-            if (args[0].equals("author")){
-                System.out.println(args[0]);
-                System.out.println(Quote.searchAuthor(quotes, args[1]));
-            }
-            else if (args[0].equals("contains")){
-                System.out.println(Quote.searchContains(quotes, args[1]));
-            }
-        } else {
-            System.out.println(quotes[rand].toString());
-        }
+//        if (args.length > 0) {
+//            if (args[0].equals("author")){
+//                System.out.println(args[0]);
+//                System.out.println(Quote.searchAuthor(quotes, args[1]));
+//            }
+//            else if (args[0].equals("contains")){
+//                System.out.println(Quote.searchContains(quotes, args[1]));
+//            }
+//        } else {
+//            System.out.println(quotes[rand].toString());
+//        }
+        getRonSwanson();
     }
 
     //method to read the the JSON file 
@@ -50,5 +56,30 @@ public class App {
     // Gets a random number
     public static int getRandom(int num) {
         return (int) Math.floor(Math.random()*(num));
+    }
+
+    // Make API call to Ron Swanson API
+    public static String getRonSwanson(){
+
+        try {
+            URL url = new URL("https://ron-swanson-quotes.herokuapp.com/v2/quotes");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = reader.readLine()) != null){
+                System.out.println(inputLine.substring(1, inputLine.length()-1));
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            return "Sorry! Internet connection not available";
+        }
+        return null;
     }
 }
