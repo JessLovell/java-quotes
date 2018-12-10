@@ -39,7 +39,11 @@ public class App {
                 }
             }
         } else {
-            System.out.println(quotes[rand].toString());
+            if(getRonSwanson() == "Sorry! Internet connection not available"){
+                System.out.println(quotes[rand].toString());
+            } else {
+                System.out.println(getRonSwanson());
+            }
         }
     }
 
